@@ -14,7 +14,7 @@ class SQLObject < MassObject
   end
 
   def self.table_name
-    @table_name || self.name.underscore
+    @table_name || self.name.underscore.pluralize
   end
 
   def self.all
