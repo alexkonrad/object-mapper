@@ -1,33 +1,36 @@
-require 'active_record_lite'
+require 'active_record_lite/02_sql_object'
 require 'securerandom'
 
-describe SQLObject do
-  before(:all) do
-    # https://tomafro.net/2010/01/tip-relative-paths-with-file-expand-path
-    cats_db_file_name =
-      File.expand_path(File.join(File.dirname(__FILE__), "cats.db"))
-    DBConnection.open(cats_db_file_name)
+# https://tomafro.net/2010/01/tip-relative-paths-with-file-expand-path
+ROOT_FOLDER = File.join(File.dirname(__FILE__), "..")
+CATS_SQL_FILE = File.join(ROOT_FOLDER, "cats.sql")
+CATS_DB_FILE = File.join(ROOT_FOLDER, "cats.db")
 
+describe SQLObject do
+  before(:each) do
+    commands = [
+      "rm #{CATS_DB_FILE}",
+      "cat #{CATS_SQL_FILE} | sqlite3 #{CATS_DB_FILE}"
+    ]
+
+    commands.each { |command| puts command; `#{command}` }
+    DBConnection.open(CATS_DB_FILE)
+  end
+
+  before(:all) do
     class Cat < SQLObject
       set_table_name("cats")
+
+      my_attr_accessor(:id, :name, :owner_id)
       my_attr_accessible(:id, :name, :owner_id)
     end
 
     class Human < SQLObject
       set_table_name("humans")
+
+      my_attr_accessor(:id, :fname, :lname, :house_id)
       my_attr_accessible(:id, :fname, :lname, :house_id)
     end
-
-    # p Human.find(1)
-    # p Cat.find(1)
-    # p Cat.find(2)
-
-    # p Human.all
-    # p Cat.all
-
-    # c = Cat.new(:name => "Gizmo", :owner_id => 1)
-    # c.save # create
-    # c.save # update
   end
 
   it "#find finds objects by id" do

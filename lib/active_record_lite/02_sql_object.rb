@@ -2,7 +2,7 @@ require 'active_support/inflector'
 
 require_relative './associatable'
 require_relative './db_connection'
-require_relative './mass_object'
+require_relative './01_mass_object'
 require_relative './searchable'
 
 class SQLObject < MassObject
