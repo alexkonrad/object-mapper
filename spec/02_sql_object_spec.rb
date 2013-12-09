@@ -1,21 +1,9 @@
 require 'active_record_lite/02_sql_object'
 require 'securerandom'
 
-# https://tomafro.net/2010/01/tip-relative-paths-with-file-expand-path
-ROOT_FOLDER = File.join(File.dirname(__FILE__), "..")
-CATS_SQL_FILE = File.join(ROOT_FOLDER, "cats.sql")
-CATS_DB_FILE = File.join(ROOT_FOLDER, "cats.db")
-
 describe SQLObject do
-  before(:each) do
-    commands = [
-      "rm #{CATS_DB_FILE}",
-      "cat #{CATS_SQL_FILE} | sqlite3 #{CATS_DB_FILE}"
-    ]
-
-    commands.each { |command| `#{command}` }
-    DBConnection.open(CATS_DB_FILE)
-  end
+  before(:each) { DBConnection.reset }
+  after(:each) { DBConnection.reset }
 
   before(:all) do
     class Cat < SQLObject
@@ -53,16 +41,16 @@ describe SQLObject do
     expect(c.name).to eq("Breakfast")
   end
 
-  it "#create inserts a new record" do
+  it "#insert inserts a new record" do
     cat = Cat.new(:name => "Gizmo", :owner_id => 1)
-    cat.create
+    cat.insert
 
     expect(Cat.all.count).to eq(3)
   end
 
-  it "#create sets the id" do
+  it "#insert sets the id" do
     cat = Cat.new(:name => "Gizmo", :owner_id => 1)
-    cat.create
+    cat.insert
 
     expect(cat.id).to_not be_nil
   end
@@ -82,7 +70,7 @@ describe SQLObject do
 
   it "#save calls save/update as appropriate" do
     human = Human.new
-    expect(human).to receive(:create)
+    expect(human).to receive(:insert)
     human.save
 
     human = Human.find(1)

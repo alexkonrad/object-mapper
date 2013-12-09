@@ -1,7 +1,6 @@
-require 'active_support/inflector'
-
 require_relative './db_connection'
 require_relative './01_mass_object'
+require 'active_support/inflector'
 
 class SQLObject < MassObject
   def self.table_name=(table_name)
@@ -37,10 +36,10 @@ class SQLObject < MassObject
   end
 
   def save
-    id.nil? ? create : update
+    id.nil? ? insert : update
   end
 
-  def create
+  def insert
     attr_names = self.class.attributes.join(", ")
     question_marks = (["?"] * self.class.attributes.count).join(", ")
 

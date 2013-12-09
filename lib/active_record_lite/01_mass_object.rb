@@ -15,10 +15,6 @@ class MassObject < AttrAccessorObject
     @attributes ||= []
   end
 
-  def self.parse_all(results)
-    results.map { |result| self.new(result) }
-  end
-
   def initialize(params = {})
     params.each do |attr_name, value|
       # make sure to convert keys to symbols
