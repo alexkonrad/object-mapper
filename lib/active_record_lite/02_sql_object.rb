@@ -41,10 +41,6 @@ class SQLObject < MassObject
     parse_all(results).first
   end
 
-  def save
-    id.nil? ? insert : update
-  end
-
   def insert
     attr_names = self.class.attributes.join(", ")
     question_marks = (["?"] * self.class.attributes.count).join(", ")
@@ -57,6 +53,10 @@ class SQLObject < MassObject
     SQL
 
     self.id = DBConnection.last_insert_row_id
+  end
+
+  def save
+    id.nil? ? insert : update
   end
 
   def update
