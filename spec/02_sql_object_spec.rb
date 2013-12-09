@@ -13,36 +13,80 @@ describe SQLObject do
       "cat #{CATS_SQL_FILE} | sqlite3 #{CATS_DB_FILE}"
     ]
 
-    commands.each { |command| puts command; `#{command}` }
+    commands.each { |command| `#{command}` }
     DBConnection.open(CATS_DB_FILE)
   end
 
   before(:all) do
     class Cat < SQLObject
-      set_table_name("cats")
-
       my_attr_accessor(:id, :name, :owner_id)
       my_attr_accessible(:id, :name, :owner_id)
     end
 
     class Human < SQLObject
-      set_table_name("humans")
+      self.table_name = "humans"
 
       my_attr_accessor(:id, :fname, :lname, :house_id)
       my_attr_accessible(:id, :fname, :lname, :house_id)
     end
   end
 
-  it "#find finds objects by id" do
-    c = Cat.find(1)
-    expect(c).not_to be_nil
+  it "::set_table_name sets table name" do
+    expect(Human.table_name).to eq("humans")
   end
 
-  it "#saves saves changes to an object" do
-    h = Human.find(1)
-    n = h.fname
-    h.fname = SecureRandom.urlsafe_base64(16)
-    h.save
-    n.should_not == Human.find(1).fname
+  it "::table_name generates default name" do
+    expect(Cat.table_name).to eq("cats")
+  end
+
+  it "::all returns all the cats" do
+    cats = Cat.all
+
+    cats.all? { |cat| expect(cat).to be_instance_of(Cat) }
+    expect(cats.count).to eq(2)
+  end
+
+  it "::find finds objects by id" do
+    c = Cat.find(1)
+
+    expect(c).not_to be_nil
+    expect(c.name).to eq("Breakfast")
+  end
+
+  it "#create inserts a new record" do
+    cat = Cat.new(:name => "Gizmo", :owner_id => 1)
+    cat.create
+
+    expect(Cat.all.count).to eq(3)
+  end
+
+  it "#create sets the id" do
+    cat = Cat.new(:name => "Gizmo", :owner_id => 1)
+    cat.create
+
+    expect(cat.id).to_not be_nil
+  end
+
+  it "#update changes attributes" do
+    human = Human.find(2)
+
+    human.fname = "Matthew"
+    human.lname = "von Rubens"
+    human.update
+
+    # pull the human again
+    human = Human.find(2)
+    expect(human.fname).to eq("Matthew")
+    expect(human.lname).to eq("von Rubens")
+  end
+
+  it "#save calls save/update as appropriate" do
+    human = Human.new
+    expect(human).to receive(:create)
+    human.save
+
+    human = Human.find(1)
+    expect(human).to receive(:update)
+    human.save
   end
 end

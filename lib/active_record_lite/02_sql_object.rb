@@ -1,15 +1,10 @@
 require 'active_support/inflector'
 
-require_relative './associatable'
 require_relative './db_connection'
 require_relative './01_mass_object'
-require_relative './searchable'
 
 class SQLObject < MassObject
-  extend Associatable
-  extend Searchable
-
-  def self.set_table_name(table_name)
+  def self.table_name=(table_name)
     @table_name = table_name
   end
 
@@ -19,8 +14,10 @@ class SQLObject < MassObject
 
   def self.all
     results = DBConnection.execute(<<-SQL)
-      SELECT *
-        FROM #{table_name}
+      SELECT
+        #{table_name}.*
+      FROM
+        #{table_name}
     SQL
 
     parse_all(results)
@@ -28,25 +25,19 @@ class SQLObject < MassObject
 
   def self.find(id)
     results = DBConnection.execute(<<-SQL, id)
-      SELECT *
-        FROM #{table_name}
-       WHERE id = ?
+      SELECT
+        #{table_name}.*
+      FROM
+        #{table_name}
+      WHERE
+        #{table_name}.id = ?
     SQL
 
     parse_all(results).first
   end
 
   def save
-    if id.nil?
-      create
-    else
-      update
-    end
-  end
-
-  private
-  def attribute_values
-    self.class.attributes.map { |attr| self.send(attr) }
+    id.nil? ? create : update
   end
 
   def create
@@ -67,9 +58,17 @@ class SQLObject < MassObject
     set_line = self.class.attributes.map { |attr| "#{attr} = ?" }.join(", ")
 
     DBConnection.execute(<<-SQL, *attribute_values, id)
-      UPDATE #{self.class.table_name}
-         SET #{set_line}
-       WHERE id = ?
+      UPDATE
+        #{self.class.table_name}
+      SET
+        #{set_line}
+      WHERE
+        #{self.class.table_name}.id = ?
     SQL
+  end
+
+  private
+  def attribute_values
+    self.class.attributes.map { |attr| self.send(attr) }
   end
 end

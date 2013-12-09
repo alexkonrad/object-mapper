@@ -13,7 +13,7 @@ describe MassObject do
   end
 
   it "::attributes starts out empty" do
-    EmptyMassObject.attributes.should be_empty
+    expect(EmptyMassObject.attributes).to be_empty
   end
 
   it "::attriburtes cannot be called directly on MassObject" do
@@ -23,21 +23,21 @@ describe MassObject do
   end
 
   it "::my_attr_accessible sets self.attributes" do
-    MyMassObject.attributes.should eq([:x, :y])
+    expect(MyMassObject.attributes).to eq([:x, :y])
   end
 
   it "#initialize performs mass-assignment" do
     obj = MyMassObject.new(:x => "xxx", :y => "yyy")
 
-    obj.x.should eq("xxx")
-    obj.y.should eq("yyy")
+    expect(obj.x).to eq("xxx")
+    expect(obj.y).to eq("yyy")
   end
 
   it "#initialize doesn't mind string keys" do
     obj = MyMassObject.new("x" => "xxx", "y" => "yyy")
 
-    obj.x.should eq("xxx")
-    obj.y.should eq("yyy")
+    expect(obj.x).to eq("xxx")
+    expect(obj.y).to eq("yyy")
   end
 
   it "#initialize rejects unregistered keys" do
