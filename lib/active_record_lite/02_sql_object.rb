@@ -1,6 +1,12 @@
-require_relative './db_connection'
-require_relative './01_mass_object'
+require_relative 'db_connection'
+require_relative '01_mass_object'
 require 'active_support/inflector'
+
+class SQLObject < MassObject
+  def self.parse_all(results)
+    results.map { |result| self.new(result) }
+  end
+end
 
 class SQLObject < MassObject
   def self.table_name=(table_name)

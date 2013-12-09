@@ -1,4 +1,4 @@
-require '00_attr_accessor_object'
+require 'active_record_lite/00_attr_accessor_object'
 
 describe AttrAccessorObject do
   before(:all) do
