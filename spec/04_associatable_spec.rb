@@ -108,8 +108,8 @@ describe "Associatable" do
 
   describe "#belongs_to" do
     it "adds association as method" do
-      cat.methods.should include(:human)
-      human.methods.should include(:house)
+      expect(cat).to respond_to(:human)
+      expect(human).to respond_to(:house)
     end
 
     it "adds an association that returns correct type" do
@@ -120,7 +120,7 @@ describe "Associatable" do
 
   describe "#has_many" do
     it "association as method" do
-      human.methods.should include(:cats)
+      expect(human).to respond_to(:cats)
     end
 
     it "adds an association that returns correct type" do
