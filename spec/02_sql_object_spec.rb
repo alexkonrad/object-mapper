@@ -27,6 +27,20 @@ describe SQLObject do
     expect(Cat.table_name).to eq("cats")
   end
 
+  it "::parse_all turns an array of hashes into objects" do
+    hashes = [
+      { :name => "cat1", :owner_id => 1 },
+      { :name => "cat2", :owner_id => 2 }
+    ]
+
+    cats = Cat.parse_all(hashes)
+    expect(cats.length).to eq(2)
+    hashes.each_index do |i|
+      expect(cats[i].name).to eq(hashes[i][:name])
+      expect(cats[i].owner_id).to eq(hashes[i][:owner_id])
+    end
+  end
+
   it "::all returns all the cats" do
     cats = Cat.all
 
