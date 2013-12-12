@@ -1,8 +1,8 @@
 require_relative '03_searchable'
 require 'active_support/inflector'
 
-class AssocParams
-  attr_reader(
+class AssocOptions
+  attr_accessor(
     :foreign_key,
     :other_class_name,
     :primary_key,
@@ -17,29 +17,31 @@ class AssocParams
   end
 end
 
-class BelongsToAssocParams < AssocParams
-  def initialize(name, params)
-    @foreign_key = params[:foreign_key] || "#{name}_id".to_sym
-    @other_class_name = params[:class_name] || name.to_s.camelcase
-    @primary_key = params[:primary_key] || :id
-  end
+class BelongsToOptions < AssocOptions
+  def initialize(name, params = {})
+    defaults = {
+      :foreign_key => "#{name}_id".to_sym,
+      :other_class_name => name.to_s.camelcase,
+      :primary_key => :id
+    }
 
-  def type
-    :belongs_to
+    defaults.keys.each do |key|
+      self.send("#{key}=", params[key] || defaults[key])
+    end
   end
 end
 
-class HasManyAssocParams < AssocParams
-  def initialize(name, params, self_class)
-    @foreign_key = (params[:foreign_key] ||
-      "#{self_class.name.underscore}_id".to_sym)
-    @other_class_name = (params[:class_name] ||
-      name.to_s.singularize.camelcase)
-    @primary_key = params[:primary_key] || :id
-  end
+class HasManyOptions < AssocOptions
+  def initialize(name, self_class_name, params = {})
+    defaults = {
+      :foreign_key => "#{self_class_name.underscore}_id".to_sym,
+      :other_class_name => name.to_s.singularize.camelcase,
+      :primary_key => :id
+    }
 
-  def type
-    :has_many
+    defaults.keys.each do |key|
+      self.send("#{key}=", params[key] || defaults[key])
+    end
   end
 end
 
@@ -50,7 +52,7 @@ module Associatable
   end
 
   def belongs_to(name, params = {})
-    aps = BelongsToAssocParams.new(name, params)
+    aps = BelongsToOptions.new(name, params)
     assoc_params[name] = aps
 
     define_method(name) do
@@ -65,7 +67,7 @@ module Associatable
   end
 
   def has_many(name, params = {})
-    aps = HasManyAssocParams.new(name, params, self)
+    aps = HasManyOptions.new(name, self.name, params)
     assoc_params[name] = aps
 
     define_method(name) do
