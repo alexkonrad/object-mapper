@@ -1,6 +1,7 @@
 require_relative '03_searchable'
 require 'active_support/inflector'
 
+# Phase IVa
 class AssocOptions
   attr_accessor(
     :foreign_key,
@@ -45,40 +46,58 @@ class HasManyOptions < AssocOptions
   end
 end
 
+# Phase IVb
+module Associatable
+  def belongs_to(name, params = {})
+    self.assoc_params[name] = BelongsToOptions.new(name, params)
+
+    define_method(name) do
+      options = self.class.assoc_params[name]
+
+      foreign_key_val = self.send(options.foreign_key)
+      results = DBConnection.execute(<<-SQL, foreign_key_val)
+        SELECT
+          *
+        FROM
+          #{options.other_table}
+        WHERE
+          #{options.other_table}.#{options.primary_key} = ?
+      SQL
+
+      options.other_class.parse_all(results).first
+    end
+  end
+end
+
+# Phase IVb
+module Associatable
+  def has_many(name, params = {})
+    self.assoc_params[name] =
+      HasManyOptions.new(name, self.name, params)
+
+    define_method(name) do
+      options = self.class.assoc_params[name]
+
+      primary_key_val = self.send(options.primary_key)
+      results = DBConnection.execute(<<-SQL, primary_key_val)
+        SELECT
+          *
+        FROM
+          #{options.other_table}
+        WHERE
+          #{options.other_table}.#{options.foreign_key} = ?
+      SQL
+
+      options.other_class.parse_all(results)
+    end
+  end
+end
+
+# Phase IVc
 module Associatable
   def assoc_params
     @assoc_params ||= {}
     @assoc_params
-  end
-
-  def belongs_to(name, params = {})
-    aps = BelongsToOptions.new(name, params)
-    assoc_params[name] = aps
-
-    define_method(name) do
-      results = DBConnection.execute(<<-SQL, self.send(aps.foreign_key))
-        SELECT *
-          FROM #{aps.other_table}
-         WHERE #{aps.other_table}.#{aps.primary_key} = ?
-      SQL
-
-      aps.other_class.parse_all(results).first
-    end
-  end
-
-  def has_many(name, params = {})
-    aps = HasManyOptions.new(name, self.name, params)
-    assoc_params[name] = aps
-
-    define_method(name) do
-      results = DBConnection.execute(<<-SQL, self.send(aps.primary_key))
-        SELECT *
-          FROM #{aps.other_table}
-         WHERE #{aps.other_table}.#{aps.foreign_key} = ?
-      SQL
-
-      aps.other_class.parse_all(results)
-    end
   end
 
   def has_one_through(name, assoc1, assoc2)
