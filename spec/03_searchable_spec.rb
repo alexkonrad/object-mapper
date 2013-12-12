@@ -1,18 +1,20 @@
-require 'active_record_lite'
+require 'active_record_lite/03_searchable'
 
 describe "searchable" do
-  before(:all) do
-    cats_db_file_name =File.expand_path(File.join(File.dirname(__FILE__), "cats.db"))
-    DBConnection.open(cats_db_file_name)
+  before(:each) { DBConnection.reset }
+  after(:each) { DBConnection.reset }
 
+  before(:all) do
     class Cat < SQLObject
-      set_table_name("cats")
-      my_attr_accessible(:id, :name, :owner_id)
+      my_attr_accessor :id, :name, :owner_id
+      my_attr_accessible :id, :name, :owner_id
     end
 
     class Human < SQLObject
-      set_table_name("humans")
-      my_attr_accessible(:id, :fname, :lname, :house_id)
+      self.table_name = "humans"
+
+      my_attr_accessor :id, :fname, :lname, :house_id
+      my_attr_accessible :id, :fname, :lname, :house_id
     end
   end
 
