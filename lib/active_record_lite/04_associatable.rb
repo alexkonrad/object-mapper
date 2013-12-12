@@ -1,6 +1,5 @@
-require 'active_support/core_ext/object/try'
+require_relative '03_searchable'
 require 'active_support/inflector'
-require_relative './db_connection.rb'
 
 class AssocParams
   attr_reader(
@@ -99,4 +98,8 @@ module Associatable
       params2.other_class.parse_all(results).first
     end
   end
+end
+
+class SQLObject
+  extend Associatable
 end
