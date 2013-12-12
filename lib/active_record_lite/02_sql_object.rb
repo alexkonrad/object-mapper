@@ -42,12 +42,12 @@ class SQLObject < MassObject
   end
 
   def insert
-    attr_names = self.class.attributes.join(", ")
+    col_names = self.class.attributes.join(", ")
     question_marks = (["?"] * self.class.attributes.count).join(", ")
 
     DBConnection.execute(<<-SQL, *attribute_values)
       INSERT INTO
-        #{self.class.table_name} (#{attr_names})
+        #{self.class.table_name} (#{col_names})
       VALUES
         (#{question_marks})
     SQL
@@ -60,7 +60,8 @@ class SQLObject < MassObject
   end
 
   def update
-    set_line = self.class.attributes.map { |attr| "#{attr} = ?" }.join(", ")
+    set_line = self.class.attributes
+      .map { |attr| "#{attr} = ?" }.join(", ")
 
     DBConnection.execute(<<-SQL, *attribute_values, id)
       UPDATE
@@ -72,7 +73,6 @@ class SQLObject < MassObject
     SQL
   end
 
-  private
   def attribute_values
     self.class.attributes.map { |attr| self.send(attr) }
   end

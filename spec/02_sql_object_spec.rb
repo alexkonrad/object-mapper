@@ -48,6 +48,12 @@ describe SQLObject do
     expect(cats.count).to eq(2)
   end
 
+  it "#attribute_values returns array of values" do
+    cat = Cat.new(:id => 123, :name => "cat1", :owner_id => 1)
+
+    expect(cat.attribute_values).to eq([123, "cat1", 1])
+  end
+
   it "::find finds objects by id" do
     c = Cat.find(1)
 
