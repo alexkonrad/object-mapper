@@ -44,8 +44,8 @@ describe SQLObject do
   it "::all returns all the cats" do
     cats = Cat.all
 
+    expect(cats.count).to eq(4)
     cats.all? { |cat| expect(cat).to be_instance_of(Cat) }
-    expect(cats.count).to eq(2)
   end
 
   it "#attribute_values returns array of values" do
@@ -65,7 +65,7 @@ describe SQLObject do
     cat = Cat.new(:name => "Gizmo", :owner_id => 1)
     cat.insert
 
-    expect(Cat.all.count).to eq(3)
+    expect(Cat.all.count).to eq(5)
   end
 
   it "#insert sets the id" do
