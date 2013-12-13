@@ -62,7 +62,6 @@ module Associatable
     end
   end
 
-  # Phase IVc
   def has_many(name, options = {})
     self.assoc_options[name] =
       HasManyOptions.new(name, self.name, options)
