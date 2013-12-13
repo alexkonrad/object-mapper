@@ -67,10 +67,8 @@ module Associatable
       options.other_class.parse_all(results).first
     end
   end
-end
 
-# Phase IVb
-module Associatable
+  # Phase IVc
   def has_many(name, options = {})
     self.assoc_options[name] =
       HasManyOptions.new(name, self.name, options)
@@ -91,47 +89,11 @@ module Associatable
       options.other_class.parse_all(results)
     end
   end
-end
 
-# Phase IVc
-module Associatable
-  # Go back and modify `belongs_to`/`has_many` to store params in
-  # `::assoc_options`.
+  # Wait to implement this in Phase V
   def assoc_options
     @assoc_options ||= {}
     @assoc_options
-  end
-
-  def has_one_through(name, through_name, source_name)
-    define_method(name) do
-      through_options = self.class.assoc_options[through_name]
-      source_options =
-        through_options.other_class.assoc_options[source_name]
-
-      through_table = through_options.other_table
-      through_pk = through_options.primary_key
-      through_fk = through_options.foreign_key
-
-      source_table = source_options.other_table
-      source_pk = source_options.primary_key
-      source_fk = source_options.foreign_key
-
-      key_val = self.send(through_fk)
-      results = DBConnection.execute(<<-SQL, key_val)
-        SELECT
-          #{source_table}.*
-        FROM
-          #{through_table}
-        JOIN
-          #{source_table}
-        ON
-          #{through_table}.#{source_fk} = #{source_table}.#{source_pk}
-        WHERE
-          #{through_table}.#{through_pk} = ?
-      SQL
-
-      source_options.other_class.parse_all(results).first
-    end
   end
 end
 

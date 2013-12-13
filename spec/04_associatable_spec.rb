@@ -82,8 +82,6 @@ describe "Associatable" do
         :primary_key => :id,
         :foreign_key => :owner_id
       )
-
-      has_one_through :house, :human, :house
     end
 
     class Human < SQLObject
