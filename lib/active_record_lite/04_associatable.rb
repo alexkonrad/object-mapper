@@ -55,16 +55,10 @@ module Associatable
       options = self.class.assoc_options[name]
 
       key_val = self.send(options.foreign_key)
-      results = DBConnection.execute(<<-SQL, key_val)
-        SELECT
-          *
-        FROM
-          #{options.other_table}
-        WHERE
-          #{options.other_table}.#{options.primary_key} = ?
-      SQL
-
-      options.other_class.parse_all(results).first
+      options
+        .other_class
+        .where(options.primary_key => key_val)
+        .first
     end
   end
 
@@ -77,16 +71,9 @@ module Associatable
       options = self.class.assoc_options[name]
 
       key_val = self.send(options.primary_key)
-      results = DBConnection.execute(<<-SQL, key_val)
-        SELECT
-          *
-        FROM
-          #{options.other_table}
-        WHERE
-          #{options.other_table}.#{options.foreign_key} = ?
-      SQL
-
-      options.other_class.parse_all(results)
+      options
+        .other_class
+        .where(options.foreign_key => key_val)
     end
   end
 
