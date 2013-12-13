@@ -6,19 +6,19 @@ describe "AssocOptions" do
       options = BelongsToOptions.new("house")
 
       expect(options.foreign_key).to eq(:house_id)
-      expect(options.other_class_name).to eq("House")
+      expect(options.class_name).to eq("House")
       expect(options.primary_key).to eq(:id)
     end
 
     it "allows overrides" do
       options = BelongsToOptions.new("owner", {
           :foreign_key => :human_id,
-          :other_class_name => "Human",
+          :class_name => "Human",
           :primary_key => :human_id
         })
 
       expect(options.foreign_key).to eq(:human_id)
-      expect(options.other_class_name).to eq("Human")
+      expect(options.class_name).to eq("Human")
       expect(options.primary_key).to eq(:human_id)
     end
   end
@@ -28,19 +28,19 @@ describe "AssocOptions" do
       options = HasManyOptions.new("cats", "Human")
 
       expect(options.foreign_key).to eq(:human_id)
-      expect(options.other_class_name).to eq("Cat")
+      expect(options.class_name).to eq("Cat")
       expect(options.primary_key).to eq(:id)
     end
 
     it "allows overrides" do
       options = HasManyOptions.new("cats", "Human", {
           :foreign_key => :owner_id,
-          :other_class_name => "Kitten",
+          :class_name => "Kitten",
           :primary_key => :human_id
         })
 
       expect(options.foreign_key).to eq(:owner_id)
-      expect(options.other_class_name).to eq("Kitten")
+      expect(options.class_name).to eq("Kitten")
       expect(options.primary_key).to eq(:human_id)
     end
   end

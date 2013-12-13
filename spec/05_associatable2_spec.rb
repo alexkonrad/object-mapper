@@ -48,7 +48,7 @@ describe "Associatable" do
 
       expect(human_options).to be_instance_of(BelongsToOptions)
       expect(human_options.foreign_key).to eq(:owner_id)
-      expect(human_options.other_class_name).to eq("Human")
+      expect(human_options.class_name).to eq("Human")
       expect(human_options.primary_key).to eq(:id)
     end
 
