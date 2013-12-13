@@ -13,7 +13,7 @@ class AssocOptions
     @class_name.constantize
   end
 
-  def other_table
+  def table_name
     other_class.table_name
   end
 end

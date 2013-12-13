@@ -8,11 +8,11 @@ module Associatable
       source_options =
         through_options.other_class.assoc_options[source_name]
 
-      through_table = through_options.other_table
+      through_table = through_options.table_name
       through_pk = through_options.primary_key
       through_fk = through_options.foreign_key
 
-      source_table = source_options.other_table
+      source_table = source_options.table_name
       source_pk = source_options.primary_key
       source_fk = source_options.foreign_key
 
