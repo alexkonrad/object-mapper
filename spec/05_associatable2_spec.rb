@@ -9,16 +9,12 @@ describe "Associatable" do
       my_attr_accessible :id, :name, :owner_id
       my_attr_accessor :id, :name, :owner_id
 
-      belongs_to(
-        :human,
-        :class_name => "Human",
-        :primary_key => :id,
-        :foreign_key => :owner_id
-      )
+      belongs_to :human, :foreign_key => :owner_id
     end
 
     class Human < SQLObject
       self.table_name = "humans"
+
       my_attr_accessible :id, :fname, :lname, :house_id
       my_attr_accessor :id, :fname, :lname, :house_id
 
