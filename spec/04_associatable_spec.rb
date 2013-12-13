@@ -1,6 +1,6 @@
 require 'active_record_lite/04_associatable'
 
-describe "AssocParams" do
+describe "AssocOptions" do
   describe "BelongsToOptions" do
     it "provides defaults" do
       options = BelongsToOptions.new("house")
@@ -45,7 +45,7 @@ describe "AssocParams" do
     end
   end
 
-  describe "AssocParams" do
+  describe "AssocOptions" do
     before(:all) do
       class Cat < SQLObject
       end
