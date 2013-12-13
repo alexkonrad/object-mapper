@@ -103,28 +103,53 @@ describe "Associatable" do
     end
   end
 
-  let(:cat) { Cat.find(1) }
-  let(:human) { Human.find(1) }
-
   describe "#belongs_to" do
-    it "adds association as method" do
-      expect(cat).to respond_to(:human)
-      expect(human).to respond_to(:house)
+    let(:breakfast) { Cat.find(1) }
+    let(:devon) { Human.find(1) }
+
+    it "fetches `human` from `Cat` correctly" do
+      expect(breakfast).to respond_to(:human)
+      human = breakfast.human
+
+      expect(human).to be_instance_of(Human)
+      expect(human.fname).to eq("Devon")
     end
 
-    it "adds an association that returns correct type" do
-      cat.human.should be_instance_of(Human)
-      human.house.should be_instance_of(House)
+    it "fetches `house` from `Human` correctly" do
+      expect(devon).to respond_to(:house)
+      house = devon.house
+
+      expect(house).to be_instance_of(House)
+      expect(house.address).to eq("26th and Guerrero")
     end
   end
 
   describe "#has_many" do
-    it "association as method" do
-      expect(human).to respond_to(:cats)
+    let(:ned) { Human.find(3) }
+    let(:ned_house) { House.find(2) }
+
+    it "fetches `cats` from `Human`" do
+      expect(ned).to respond_to(:cats)
+      cats = ned.cats
+
+      expect(cats.length).to eq(2)
+
+      expected_cat_names = ["Haskell", "Markov"]
+      2.times do |i|
+        cat = cats[i]
+
+        expect(cat).to be_instance_of(Cat)
+        expect(cat.name).to eq(expected_cat_names[i])
+      end
     end
 
-    it "adds an association that returns correct type" do
-      human.cats.first.should be_instance_of(Cat)
+    it "fetches `humans` from `House`" do
+      expect(ned_house).to respond_to(:humans)
+      humans = ned_house.humans
+
+      expect(humans.length).to eq(1)
+      expect(humans[0]).to be_instance_of(Human)
+      expect(humans[0].fname).to eq("Ned")
     end
   end
 end
