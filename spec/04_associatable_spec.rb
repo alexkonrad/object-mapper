@@ -55,13 +55,13 @@ describe "AssocOptions" do
       end
     end
 
-    it "#other_class returns class of associated object" do
+    it "#model_class returns class of associated object" do
       options = BelongsToOptions.new("human")
-      expect(options.other_class).to eq(Human)
+      expect(options.model_class).to eq(Human)
       expect(options.table_name).to eq("humans")
 
       options = HasManyOptions.new("cats", "Human")
-      expect(options.other_class).to eq(Cat)
+      expect(options.model_class).to eq(Cat)
       expect(options.table_name).to eq("cats")
     end
   end

@@ -9,12 +9,12 @@ class AssocOptions
     :primary_key,
   )
 
-  def other_class
+  def model_class
     @class_name.constantize
   end
 
   def table_name
-    other_class.table_name
+    model_class.table_name
   end
 end
 
@@ -56,7 +56,7 @@ module Associatable
 
       key_val = self.send(options.foreign_key)
       options
-        .other_class
+        .model_class
         .where(options.primary_key => key_val)
         .first
     end
@@ -72,7 +72,7 @@ module Associatable
 
       key_val = self.send(options.primary_key)
       options
-        .other_class
+        .model_class
         .where(options.foreign_key => key_val)
     end
   end

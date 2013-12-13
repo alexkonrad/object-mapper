@@ -6,7 +6,7 @@ module Associatable
     define_method(name) do
       through_options = self.class.assoc_options[through_name]
       source_options =
-        through_options.other_class.assoc_options[source_name]
+        through_options.model_class.assoc_options[source_name]
 
       through_table = through_options.table_name
       through_pk = through_options.primary_key
@@ -30,7 +30,7 @@ module Associatable
           #{through_table}.#{through_pk} = ?
       SQL
 
-      source_options.other_class.parse_all(results).first
+      source_options.model_class.parse_all(results).first
     end
   end
 end
