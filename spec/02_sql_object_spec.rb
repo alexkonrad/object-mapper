@@ -61,18 +61,26 @@ describe SQLObject do
     expect(c.name).to eq("Breakfast")
   end
 
-  it "#insert inserts a new record" do
-    cat = Cat.new(:name => "Gizmo", :owner_id => 1)
-    cat.insert
+  describe "#insert" do
+    let(:cat) { Cat.new(:name => "Gizmo", :owner_id => 1) }
 
-    expect(Cat.all.count).to eq(5)
-  end
+    before(:each) { cat.insert }
 
-  it "#insert sets the id" do
-    cat = Cat.new(:name => "Gizmo", :owner_id => 1)
-    cat.insert
+    it "#insert inserts a new record" do
+      expect(Cat.all.count).to eq(5)
+    end
 
-    expect(cat.id).to_not be_nil
+    it "#insert sets the id" do
+      expect(cat.id).to_not be_nil
+    end
+
+    it "#insert creates record with proper values" do
+      # pull the cat again
+      cat2 = Cat.find(cat.id)
+
+      expect(cat2.name).to eq("Gizmo")
+      expect(cat2.owner_id).to eq(1)
+    end
   end
 
   it "#update changes attributes" do
