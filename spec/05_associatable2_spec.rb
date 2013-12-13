@@ -15,7 +15,6 @@ describe "Associatable" do
         :primary_key => :id,
         :foreign_key => :owner_id
       )
-      has_one_through :house, :human, :house
     end
 
     class Human < SQLObject
@@ -59,6 +58,27 @@ describe "Associatable" do
 
       expect(Human.assoc_options).to have_key(:house)
       expect(Cat.assoc_options).to_not have_key(:house)
+    end
+  end
+
+  describe "#has_one_through" do
+    before(:all) do
+      class Cat
+        has_one_through :home, :human, :house
+      end
+    end
+
+    let(:cat) { Cat.find(1) }
+
+    it "adds getter method" do
+      expect(cat).to respond_to(:home)
+    end
+
+    it "fetches associated `home` for a `Cat`" do
+      house = cat.home
+
+      expect(house).to be_instance_of(House)
+      expect(house.address).to eq("26th and Guerrero")
     end
   end
 end
