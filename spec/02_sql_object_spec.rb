@@ -51,12 +51,6 @@ describe SQLObject do
       cats.all? { |cat| expect(cat).to be_instance_of(Cat) }
     end
 
-    it "#attribute_values returns array of values" do
-      cat = Cat.new(:id => 123, :name => "cat1", :owner_id => 1)
-
-      expect(cat.attribute_values).to eq([123, "cat1", 1])
-    end
-
     it "::find finds objects by id" do
       c = Cat.find(1)
 
@@ -69,6 +63,12 @@ describe SQLObject do
     let(:cat) { Cat.new(:name => "Gizmo", :owner_id => 1) }
 
     before(:each) { cat.insert }
+
+    it "#attribute_values returns array of values" do
+      cat = Cat.new(:id => 123, :name => "cat1", :owner_id => 1)
+
+      expect(cat.attribute_values).to eq([123, "cat1", 1])
+    end
 
     it "#insert inserts a new record" do
       expect(Cat.all.count).to eq(5)
