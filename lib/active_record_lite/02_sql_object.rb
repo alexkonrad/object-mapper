@@ -53,7 +53,7 @@ class SQLObject < MassObject
   def insert
     table_name = self.class.table_name
     query = <<-SQL
-    INSERT INTO #{table_name} (#{column_values.join(', ')})
+    INSERT INTO #{table_name} (#{column_values[1..-1].join(', ')})
     VALUES (#{(["?"] * (attribute_values.count-1)).join(", ")})
     SQL
 
@@ -70,7 +70,7 @@ class SQLObject < MassObject
     table_name = self.class.table_name
     query = <<-SQL
     UPDATE #{table_name}
-    SET #{(0...column_values.count).map {|i| "#{column_values[i]} = ?"}.join(", ")}
+    SET #{(0...column_values[1..-1].count).map {|i| "#{column_values[1..-1][i]} = ?"}.join(", ")}
     WHERE id = ?
     SQL
 
@@ -78,7 +78,7 @@ class SQLObject < MassObject
   end
 
   def column_values
-    self.class.attributes.map { |col| col.to_s.gsub(":","") }[1..-1]
+    self.class.attributes.map { |col| col.to_s.gsub(":","") }
   end
 
   def attribute_values

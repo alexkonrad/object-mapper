@@ -12,7 +12,7 @@ describe SQLObject do
     end
 
     class Human < SQLObject
-      self.table_name = "humans"
+      #self.table_name = "humans"
 
       my_attr_accessor :id, :fname, :lname, :house_id
       my_attr_accessible :id, :fname, :lname, :house_id
