@@ -2,14 +2,6 @@ require_relative 'db_connection'
 require_relative '01_mass_object'
 require 'active_support/inflector'
 
-#ActiveSupport::Inflector.inflections do |inflect|
-#  inflect.plural /^(ox)$/i, '\1en'
-#  inflect.plural 'human', 'humans'
-#  inflect.singular /^(ox)en/i, '\1'
-#  inflect.irregular 'person', 'people'
-#  inflect.uncountable %w( fish sheep )
-#end
-
 class MassObject
   def self.parse_all(results)
     results.map do |result|
@@ -84,4 +76,12 @@ class SQLObject < MassObject
   def attribute_values
     self.class.attributes.map { |var| self.send(var) }
   end
+end
+
+ActiveSupport::Inflector.inflections do |inflect|
+  inflect.plural /^(ox)$/i, '\1en'
+  inflect.plural 'human', 'humans'
+  inflect.singular /^(ox)en/i, '\1'
+  inflect.irregular 'person', 'people'
+  inflect.uncountable %w( fish sheep )
 end
