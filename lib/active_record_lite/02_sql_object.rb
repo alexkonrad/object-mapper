@@ -63,11 +63,18 @@ class SQLObject < MassObject
   end
 
   def save
-    # ...
+    self.id ? update : insert
   end
 
   def update
-    # ...
+    table_name = self.class.table_name
+    query = <<-SQL
+    UPDATE #{table_name}
+    SET #{(0...column_values.count).map {|i| "#{column_values[i]} = ?"}.join(", ")}
+    WHERE id = ?
+    SQL
+
+    DBConnection.execute(query, *attribute_values[1..-1], attribute_values[0])
   end
 
   def column_values
