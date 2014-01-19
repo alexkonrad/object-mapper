@@ -53,7 +53,7 @@ module Associatable
       SQL
 
       foreign_key = self.send(belongs_to_options.foreign_key)
-      p DBConnection.execute(query, foreign_key)
+      DBConnection.execute(query, foreign_key)
       objects = eval(belongs_to_options.class_name).parse_all(DBConnection.execute(query, foreign_key))
       objects[0]
     end
@@ -75,7 +75,7 @@ module Associatable
       SQL
 
       primary_key = self.send(has_many_options.primary_key)
-      p DBConnection.execute(query, primary_key)
+      DBConnection.execute(query, primary_key)
       objects = eval(has_many_options.class_name).parse_all(DBConnection.execute(query, primary_key))
       objects
     end
