@@ -40,6 +40,8 @@ module Associatable
   # Phase IVb
   def belongs_to(name, options = {})
     belongs_to_options = BelongsToOptions.new(name, options)
+    @assoc_options ||= {}
+    @assoc_options[name] = belongs_to_options
 
     # method to return an object from the database
     define_method(name.to_s) do
@@ -60,7 +62,8 @@ module Associatable
 
   def has_many(name, options = {})
     has_many_options = HasManyOptions.new(name, self.name, options)
-
+    @assoc_options ||= {}
+    @assoc_options[name] = has_many_options
     # method to return an object from the database
     define_method(name.to_s) do
       foreign_table = has_many_options.class_name.underscore.pluralize
@@ -80,10 +83,12 @@ module Associatable
 
   def assoc_options
     # Wait to implement this in Phase V. Modify `belongs_to`, too.
+    @assoc_options || {}
   end
 end
 
 class SQLObject
   extend Associatable
+  include Associatable
   # Mixin Associatable here...
 end

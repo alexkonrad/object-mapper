@@ -4,11 +4,9 @@ require 'active_support/inflector'
 
 class MassObject
   def self.parse_all(results)
-    new_objects = results.map do |result|
+    results.map do |result|
       self.new(result)
     end
-
-    new_objects
   end
 end
 
